@@ -1,0 +1,8 @@
+name: Economy
+main: economy\Main
+
+src-namespace-prefix: economy
+
+author: Myma
+api: [ 4.0.0 ]
+version: 1.0

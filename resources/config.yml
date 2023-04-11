@@ -1,0 +1,176 @@
+#
+#     ▄████████  ▄████████  ▄██████▄  ███▄▄▄▄    ▄██████▄    ▄▄▄▄███▄▄▄▄   ▄██   ▄
+#    ███    ███ ███    ███ ███    ███ ███▀▀▀██▄ ███    ███ ▄██▀▀▀███▀▀▀██▄ ███   ██▄
+#    ███    █▀  ███    █▀  ███    ███ ███   ███ ███    ███ ███   ███   ███ ███▄▄▄███
+#   ▄███▄▄▄     ███        ███    ███ ███   ███ ███    ███ ███   ███   ███ ▀▀▀▀▀▀███
+#  ▀▀███▀▀▀     ███        ███    ███ ███   ███ ███    ███ ███   ███   ███ ▄██   ███
+#    ███    █▄  ███    █▄  ███    ███ ███   ███ ███    ███ ███   ███   ███ ███   ███
+#    ███    ███ ███    ███ ███    ███ ███   ███ ███    ███ ███   ███   ███ ███   ███
+#    ██████████ ████████▀   ▀██████▀   ▀█   █▀   ▀██████▀   ▀█   ███   █▀   ▀█████▀
+#
+
+economy:
+
+  # Liste des paramètres de MySQL (si le type de données est MySQL)
+  mysql:
+    # IP de la base de données
+    host: 127.0.0.1
+    # Port de la base de données
+    port: 3306
+    # Nom d'utilisateur de la base de données
+    user: myma
+    # Mot de passe de la base de données
+    password: economy_1234
+    # Nom de la base de données
+    database: economy
+
+  # Liste des messages du plugin
+  message:
+    # Message quand le plugin s'active
+    enable-plugin: Economy a été activé avec succès !
+    # Message quand le plugin se désactive
+    disable-plugin: Economy a été désactivé avec succès !
+    # Message envoyé quand le type de stockage de données indiqué dans la configuration est invalide.
+    invalid-type: Le type de données indiqué dans la configuration est invalide.
+    # Message quand un nouveau joueur se connecte et que ses données ont été crées sans erreur.
+    new-player: Les données de {player} ont été crées avec succès !
+    # Message quand la commande money a été éxécutée avec succès.
+    seemoney-success: §r§fLe joueur §e{player} §fpossède §e{money}$ §f!
+    # Message quand la commande mymoney a été éxécutée avec succès.
+    mymoney-success: §r§fVous possédez §e{money}$ §f!
+    # Message envoyé à l'éxécuteur de la commande quand la commande pay a été éxécutée avec succès.
+    pay-sender-success: §r§fVous venez d'envoyer §e{money}$ §fà §e{player} §f!
+    # Message envoyé au receveur de monnaie quand la commande pay a été éxécutée avec succès.
+    pay-target-success: §r§fVous venez de recevoir §e{money}$ §fde la part de §e{player} §f!
+    # Message envoyé à l'éxécuteur de la commande quand la commande addmoney a été éxécutée avec succès.
+    addmoney-sender-success: §r§fVous venez d'ajouter §e{money}$ §fà §e{player} §f!
+    # Message envoyé au receveur de monnaie quand la commande addmoney a été éxécutée avec succès.
+    addmoney-target-success: §r§fUn montant de §e{money}$ §fvous ont été ajoutés par §e{player} §f!
+    # Message envoyé à l'éxécuteur de la commande quand la commande reducemoney a été éxécutée avec succès.
+    reducemoney-sender-success: §r§fVous venez de retirer §e{money}$ §fà §e{player} §f!
+    # Message envoyé au receveur de monnaie quand la commande reducemoney a été éxécutée avec succès.
+    reducemoney-target-success: §r§fUn montant de §e{money}$ §fvous ont été retirés par §e{player} §f!
+    # Message envoyé à l'éxécuteur de la commande quand la commande setmoney a été éxécutée avec succès.
+    setmoney-sender-success: §r§fVous venez de définir §e{money}$ §fà §e{player} §f!
+    # Message envoyé au receveur de monnaie quand la commande setmoney a été éxécutée avec succès.
+    setmoney-target-success: §r§fUn montant de §e{money}$ §fvous ont été définis par §e{player} §f!
+    # Format du titre de la commande topmoney
+    topmoney-header: §l§6» §r§eTop Money §l§6«
+    # Format des positions du topmoney
+    topmoney-format: §e#{position}. §f{player} §8(§f{money}§8)
+    # Message quand le montant indiqué dans une commande est hors du seuil de portée accepté.
+    out-of-range-value: §r§cVotre montant doit obligatoirement être au-dessus de 0.
+    # Message quand le montant indiqué dans une commande n'est pas un nombre entier.
+    is-not-int-value: §r§cVotre montant doit obligatoirement être un nombre entier.
+    # Message quand un joueur possède un montant d'argent inférieur à celui souhaitant être envoyé à un autre joueur.
+    self-insufficient-amount: §r§cVous ne possédez pas plus de {money}$.
+    # Message quand un joueur possède un montant d'argent inférieur à celui souhaitant être enlevé.
+    other-insufficient-amount: §r§cLe joueur {player} ne possède pas au-delà de {money}$.
+    # Message quand le payeur et le receveur de monnaie est le même joueur.
+    target-sender-same-name: §r§cVous ne pouvez pas envoyer de la monnaie à vous-mêmes.
+    # Message quand le joueur n'existe pas.
+    player-not-exist: §r§cLe joueur {player} n'existe pas.
+    # Message quand vos données n'existe pas.
+    self-not-exist: §r§cVos données sont introuvables.
+    # Message quand un joueur n'a pas la permission d'éxécuter cette commande.
+    no-permission: §r§cVous n'avez pas la permission d'effectuer cette commande !
+    # Message quand l'éxécuteur de la commande est la console.
+    not-player: §r§cVous ne pouvez pas éxécuter cette commande depuis la console !
+
+  # Liste des paramètres du plugin
+  settings:
+    # Type de fichiers pour les données.
+    type: json
+    # Nombre de monnaie par défaut.
+    default-money: 1000
+
+  # Construction des commandes
+  commands:
+    # Paramètres de la commande seemoney
+    seemoney:
+      # Nom de la commande seemoney
+      name: seemoney
+      # Description de la commande seemoney
+      description: Gérer les commandes d'économie
+      # Permission de la commande seemoney
+      permission: money.use
+      # Message d'usage de la commande seemoney
+      usage: §fVous devez faire §e/seemoney (nom du joueur) §fpour voir la monnaie d'un joueur !
+      # Liste des alias de la commande seemoney
+      aliases:
+        - money
+
+    # Paramètres de la commande pay
+    pay:
+      # Nom de la commande pay
+      name: pay
+      # Description de la commande pay
+      description: Envoyer de la monnaie à un joueur
+      # Permission de la commande pay
+      permission: pay.use
+      # Message d'usage de la commande pay
+      usage: §fVous devez faire §e/pay (nom du joueur) (montant) §fpour envoyer de la monnaie à d'un joueur !
+      # Liste des alias de la commande pay
+      aliases: []
+
+    # Paramètres de la commande addmoney
+    addmoney:
+      # Nom de la commande addmoney
+      name: addmoney
+      # Description de la commande addmoney
+      description: Ajouter de la monnaie à un joueur
+      # Permission de la commande addmoney
+      permission: addmoney.use
+      # Message d'usage de la commande addmoney
+      usage: §fVous devez faire §e/addmoney (nom du joueur) (montant) §fpour ajouter de la monnaie à un joueur !
+      # Liste des alias de la commande addmoney
+      aliases: []
+
+    # Paramètres de la commande reducemoney
+    reducemoney:
+      # Nom de la commande addmoney
+      name: reducemoney
+      # Description de la commande addmoney
+      description: Retirer de la monnaie à un joueur
+      # Permission de la commande addmoney
+      permission: reducemoney.use
+      # Message d'usage de la commande addmoney
+      usage: §fVous devez faire §e/reducemoney (nom du joueur) (montant) §fpour retirer de la monnaie à un joueur !
+      # Liste des alias de la commande addmoney
+      aliases:
+        - removemoney
+
+    # Paramètres de la commande setmoney
+    setmoney:
+      # Nom de la commande setmoney
+      name: setmoney
+      # Description de la commande setmoney
+      description: Définir la monnaie d'un joueur
+      # Permission de la commande setmoney
+      permission: setmoney.use
+      # Message d'usage de la commande setmoney
+      usage: §fVous devez faire §e/setmoney (nom du joueur) (montant) §fpour définir la monnaie d'un joueur !
+      # Liste des alias de la commande setmoney
+      aliases: []
+
+    # Paramètres de la commande topmoney
+    topmoney:
+      # Nom de la commande topmoney
+      name: topmoney
+      # Description de la commande topmoney
+      description: Voir le classement des joueurs les plus riches
+      # Permission de la commande topmoney
+      permission: topmoney.use
+      # Liste des alias de la commande topmoney
+      aliases: []
+
+    # Paramètres de la commande topmoneyfloatingtext
+    topmoneyfloatingtext:
+      # Nom de la commande topmoneyfloatingtext
+      name: floatingtext
+      # Description de la commande topmoneyfloatingtext
+      description: Faire apparaître le floatingtext TopMoney
+      # Permission de la commande topmoneyfloatingtext
+      permission: topmoneyfloatingtext.use
+      # Liste des alias de la commande topmoneyfloatingtext
+      aliases: [ ]
