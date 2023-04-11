@@ -54,7 +54,7 @@ final class Main extends PluginBase {
 
         EntityFactory::getInstance()->register(TopMoneyFloatingTextEntity::class, function (World $world, CompoundTag $nbt): TopMoneyFloatingTextEntity {
             return new TopMoneyFloatingTextEntity(EntityDataHelper::parseLocation($nbt, $world), null);
-        }, ['TopRatioFloatingTextEntity']);
+        }, ['TopMoneyFloatingTextEntity']);
 
         $commands = [
             new AddMoneyCommand(),
