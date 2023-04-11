@@ -173,4 +173,4 @@ economy:
       # Permission de la commande topmoneyfloatingtext
       permission: topmoneyfloatingtext.use
       # Liste des alias de la commande topmoneyfloatingtext
-      aliases: [ ]
+      aliases: []
