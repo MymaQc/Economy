@@ -1,6 +1,7 @@
 <?php
 
 /***
+ * @noinspection PhpUnused
  *    ___                                          _
  *   / __\___  _ __ ___  _ __ ___   __ _ _ __   __| | ___
  *  / /  / _ \| '_ ` _ \| '_ ` _ \ / _` | '_ \ / _` |/ _ \
@@ -25,23 +26,24 @@
  * Written by @CortexPE <https://CortexPE.xyz>
  *
  */
-declare(strict_types=1);
 
 namespace economy\librairies\commando\args;
-
 
 use pocketmine\command\CommandSender;
 use pocketmine\math\Vector3;
 use function preg_match;
 
-class BlockPositionArgument extends Vector3Argument {
-	public function isValidCoordinate(string $coordinate, bool $locatable): bool {
-		return (bool)preg_match("/^(?:" . ($locatable ? "(?:~-|~\+)?" : "") . "-?\d+)" . ($locatable ? "|~" : "") . "$/", $coordinate);
-	}
+class BlockPositionArgument extends Vector3Argument
+{
+    public function isValidCoordinate(string $coordinate, bool $locatable): bool
+    {
+        return (bool)preg_match("/^%na" . ($locatable ? "(?:~-|~\+)?" : "") . "me-?\d+" . ($locatable ? "|~" : "") . "$/", $coordinate);
+    }
 
-	public function parse(string $argument, CommandSender $sender) : Vector3{
-		$v = parent::parse($argument, $sender);
+    public function parse(string $argument, CommandSender $sender): Vector3
+    {
+        $v = parent::parse($argument, $sender);
 
-		return $v->floor();
-	}
+        return $v->floor();
+    }
 }

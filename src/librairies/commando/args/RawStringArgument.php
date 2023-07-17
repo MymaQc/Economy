@@ -25,27 +25,31 @@
  * Written by @CortexPE <https://CortexPE.xyz>
  *
  */
-declare(strict_types=1);
 
 namespace economy\librairies\commando\args;
 
 use pocketmine\command\CommandSender;
 use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
 
-class RawStringArgument extends BaseArgument {
-	public function getNetworkType(): int {
-		return AvailableCommandsPacket::ARG_TYPE_STRING;
-	}
+class RawStringArgument extends BaseArgument
+{
+    public function getNetworkType(): int
+    {
+        return AvailableCommandsPacket::ARG_TYPE_STRING;
+    }
 
-	public function getTypeName(): string {
-		return "string";
-	}
+    public function getTypeName(): string
+    {
+        return "string";
+    }
 
-	public function canParse(string $testString, CommandSender $sender): bool {
-		return true;
-	}
+    public function canParse(string $testString, CommandSender $sender): bool
+    {
+        return true;
+    }
 
-	public function parse(string $argument, CommandSender $sender) : string{
-		return $argument;
-	}
+    public function parse(string $argument, CommandSender $sender): string
+    {
+        return $argument;
+    }
 }

@@ -7,8 +7,9 @@ use economy\librairies\commando\args\RawStringArgument;
 use economy\librairies\commando\args\TargetArgument;
 use economy\librairies\commando\BaseCommand;
 use economy\librairies\commando\exception\ArgumentOrderException;
-use economy\Main;
+use economy\Economy;
 use pocketmine\command\CommandSender;
+use pocketmine\permission\DefaultPermissions;
 use pocketmine\permission\Permission;
 use pocketmine\permission\PermissionManager;
 use pocketmine\player\Player;
@@ -17,14 +18,19 @@ use pocketmine\utils\Config;
 
 final class ReduceMoneyCommand extends BaseCommand {
 
-    /* @var Config */
+    /**
+     * @var Config
+     */
     public Config $config;
 
-    /* CONSTRUCT */
+    /**
+     * CONSTRUCT
+     */
     public function __construct() {
-        $this->config = Main::getInstance()->getConfig();
+        $this->config = Economy::getInstance()->getConfig();
+        $this->setPermission(DefaultPermissions::ROOT_OPERATOR);
         parent::__construct(
-            Main::getInstance(),
+            Economy::getInstance(),
             $this->config->getNested("economy.commands.reducemoney.name") ?? "reducemoney",
             $this->config->getNested("economy.commands.reducemoney-description") ?? "Retirer de la monnaie à un joueur",
             $this->config->getNested("economy.commands.reducemoney-aliases") ?? ["removemoney"]
@@ -36,7 +42,7 @@ final class ReduceMoneyCommand extends BaseCommand {
      * @throws ArgumentOrderException
      */
     protected function prepare(): void {
-        PermissionManager::getInstance()->addPermission(new Permission(Main::getInstance()->getConfig()->getNested("economy.commands.reducemoney-permission") ?? "reducemoney.use"));
+        PermissionManager::getInstance()->addPermission(new Permission(Economy::getInstance()->getConfig()->getNested("economy.commands.reducemoney-permission") ?? "reducemoney.use"));
         $this->registerArgument(0, new TargetArgument("player"));
         $this->registerArgument(0, new RawStringArgument("player"));
         $this->registerArgument(1, new IntegerArgument("amount"));
@@ -50,14 +56,14 @@ final class ReduceMoneyCommand extends BaseCommand {
      */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
         if ($sender instanceof Player) {
-            if ($sender->hasPermission($this->config->getNested("economy.commands.reducemoney-permission") ?? "reducemoney.use")) {
+            if ($sender->hasPermission(DefaultPermissions::ROOT_OPERATOR)) {
                 if (isset($args["player"], $args["amount"])) {
                     $player = ($target = Server::getInstance()->getPlayerByPrefix($args["player"])) instanceof Player ? $target->getName() : $args["player"];
-                    if (Main::getInstance()->getProvider()->exist($player)) {
+                    if (Economy::getInstance()->getProvider()->exist($player)) {
                         if (is_int($args["amount"])) {
-                            if (Main::getInstance()->getProvider()->get($player) >= $args["amount"]) {
+                            if (Economy::getInstance()->getProvider()->get($player) >= $args["amount"]) {
                                 if ($args["amount"] > 0) {
-                                    Main::getInstance()->getProvider()->reduce($player, $args["amount"]);
+                                    Economy::getInstance()->getProvider()->reduce($player, $args["amount"]);
                                     $sender->sendMessage(str_replace(["{money}", "{player}"], [$args["amount"], $player], $this->config->getNested("economy.message.reducemoney-sender-success")));
                                     if ($player instanceof Player) {
                                         $player->sendMessage(str_replace(["{money}", "{player}"], [$args["amount"], $sender->getName()], $this->config->getNested("economy.message.reducemoney-target-success")));

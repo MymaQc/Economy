@@ -1,6 +1,7 @@
 <?php
 
 /***
+ * @noinspection PhpUnused
  *    ___                                          _
  *   / __\___  _ __ ___  _ __ ___   __ _ _ __   __| | ___
  *  / /  / _ \| '_ ` _ \| '_ ` _ \ / _` | '_ \ / _` |/ _ \
@@ -25,16 +26,14 @@
  * Written by @CortexPE <https://CortexPE.xyz>
  *
  */
-declare(strict_types=1);
 
 namespace economy\librairies\commando\constraint;
-
 
 use economy\librairies\commando\IRunnable;
 use pocketmine\command\CommandSender;
 
-abstract class BaseConstraint {
-    /** @var IRunnable */
+abstract class BaseConstraint
+{
     protected IRunnable $context;
 
     /**
@@ -44,14 +43,16 @@ abstract class BaseConstraint {
      *
      * @param IRunnable $context
      */
-    public function __construct(IRunnable $context) {
+    public function __construct(IRunnable $context)
+    {
         $this->context = $context;
     }
 
     /**
      * @return IRunnable
      */
-    public function getContext(): IRunnable {
+    public function getContext(): IRunnable
+    {
         return $this->context;
     }
 

@@ -2,7 +2,7 @@
 
 namespace economy\provider\list;
 
-use economy\Main;
+use economy\Economy;
 use economy\provider\Provider;
 use JsonException;
 use pocketmine\player\Player;
@@ -10,19 +10,25 @@ use pocketmine\utils\Config;
 
 final class JsonProvider implements Provider {
 
-    /* @var Config */
+    /**
+     * @var Config
+     */
     private Config $provider;
 
-    /* COSNTRUCT */
+    /**
+     *
+     */
     public function __construct() {
-        $this->provider = new Config(Main::getInstance()->getDataFolder() . "Money.json", Config::JSON);
+        $this->provider = new Config(Economy::getInstance()->getDataFolder() . "Money.json", Config::JSON);
         $this->init();
     }
 
-    /* @return void */
+    /**
+     * @return void
+     */
     public function init(): void {
-        if (!is_file(Main::getInstance()->getDataFolder() . "Money.json")) {
-            fopen(Main::getInstance()->getDataFolder() . "Money.json", "w");
+        if (!is_file(Economy::getInstance()->getDataFolder() . "Money.json")) {
+            fopen(Economy::getInstance()->getDataFolder() . "Money.json", "w");
         }
     }
 

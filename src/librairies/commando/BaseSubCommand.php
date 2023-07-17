@@ -25,145 +25,54 @@
  * Written by @CortexPE <https://CortexPE.xyz>
  *
  */
-declare(strict_types=1);
 
 namespace economy\librairies\commando;
 
+use pocketmine\plugin\PluginBase;
 
-use economy\librairies\commando\constraint\BaseConstraint;
-use economy\librairies\commando\traits\ArgumentableTrait;
-use economy\librairies\commando\traits\IArgumentable;
-use pocketmine\command\CommandSender;
-use pocketmine\plugin\Plugin;
-use function explode;
+abstract class BaseSubCommand extends BaseCommand
+{
+    protected BaseCommand $parent;
 
-abstract class BaseSubCommand implements IArgumentable, IRunnable {
-	use ArgumentableTrait;
-	/** @var string */
-	private string $name;
-	/** @var string[] */
-	private array $aliases;
-	/** @var string */
-	private string $description;
-	/** @var string */
-	protected string $usageMessage;
-	/** @var string|null */
-	private ?string $permission = null;
-	/** @var CommandSender */
-	protected CommandSender $currentSender;
-	/** @var BaseCommand */
-	protected BaseCommand $parent;
-	/** @var BaseConstraint[] */
-	private array $constraints = [];
+    public function __construct(PluginBase $plugin, string $name, string $description = "", array $aliases = [])
+    {
+        parent::__construct($plugin, $name, $description, $aliases);
 
-	public function __construct(string $name, string $description = "", array $aliases = []) {
-		$this->name = $name;
-		$this->description = $description;
-		$this->aliases = $aliases;
+        $this->usageMessage = "";
+    }
 
-		$this->prepare();
+    public function getUsage(): string
+    {
+        if (empty($this->usageMessage)) {
+            $parent = $this->parent;
+            $parentNames = "";
 
-		$this->usageMessage = $this->generateUsageMessage();
-	}
+            while ($parent instanceof BaseSubCommand) {
+                $parentNames = $parent->getName() . $parentNames;
+                $parent = $parent->getParent();
+            }
 
-	abstract public function onRun(CommandSender $sender, string $aliasUsed, array $args): void;
+            if ($parent instanceof BaseCommand) {
+                $parentNames = $parent->getName() . " " . $parentNames;
+            }
 
-	/**
-	 * @return string
-	 */
-	public function getName(): string {
-		return $this->name;
-	}
+            $this->usageMessage = $this->generateUsageMessage(trim($parentNames));
+        }
+        return $this->usageMessage;
+    }
 
-	/**
-	 * @return string[]
-	 */
-	public function getAliases(): array {
-		return $this->aliases;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getDescription(): string {
-		return $this->description;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getUsageMessage(): string {
-		return $this->usageMessage;
-	}
-
-	/**
-	 * @return string|null
-	 */
-	public function getPermission(): ?string {
-		return $this->permission;
-	}
-
-	/**
-	 * @param string $permission
-	 */
-	public function setPermission(string $permission): void {
-		$this->permission = $permission;
-	}
-
-	public function testPermissionSilent(CommandSender $sender): bool {
-		if(empty($this->permission)) {
-			return true;
-		}
-		foreach(explode(";", $this->permission) as $permission) {
-			if($sender->hasPermission($permission)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * @param CommandSender $currentSender
-	 *
-	 * @internal Used to pass the current sender from the parent command
-	 */
-	public function setCurrentSender(CommandSender $currentSender): void {
-		$this->currentSender = $currentSender;
-	}
-
-	/**
-	 * @param BaseCommand $parent
-	 *
-	 * @internal Used to pass the parent context from the parent command
-	 */
-	public function setParent(BaseCommand $parent): void {
-		$this->parent = $parent;
-	}
-
-	public function sendError(int $errorCode, array $args = []): void {
-		$this->parent->sendError($errorCode, $args);
-	}
-
-	public function sendUsage():void {
-		$this->currentSender->sendMessage("/{$this->parent->getName()} $this->usageMessage");
-	}
-
-    public function addConstraint(BaseConstraint $constraint) : void {
-        $this->constraints[] = $constraint;
+    public function getParent(): ?BaseCommand
+    {
+        return $this->parent;
     }
 
     /**
-     * @return BaseConstraint[]
+     * @param BaseCommand $parent
+     *
+     * @internal Used to pass the parent context from the parent command
      */
-    public function getConstraints(): array {
-        return $this->constraints;
+    public function setParent(BaseCommand $parent): void
+    {
+        $this->parent = $parent;
     }
-
-	/**
-	 * @return Plugin
-	 */
-	public function getOwningPlugin(): Plugin {
-		return $this->parent->getOwningPlugin();
-	}
 }

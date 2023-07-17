@@ -6,22 +6,28 @@ use economy\librairies\commando\args\RawStringArgument;
 use economy\librairies\commando\args\TargetArgument;
 use economy\librairies\commando\BaseCommand;
 use economy\librairies\commando\exception\ArgumentOrderException;
-use economy\Main;
+use economy\Economy;
 use pocketmine\command\CommandSender;
+use pocketmine\permission\DefaultPermissions;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 
 final class SeeMoneyCommand extends BaseCommand {
 
-    /* @var Config */
+    /**
+     * @var Config
+     */
     public Config $config;
 
-    /* CONSTRUCT */
+    /**
+     * CONSTRUCT
+     */
     public function __construct() {
-        $this->config = Main::getInstance()->getConfig();
+        $this->config = Economy::getInstance()->getConfig();
+        $this->setPermission(DefaultPermissions::ROOT_USER);
         parent::__construct(
-            Main::getInstance(),
+            Economy::getInstance(),
             $this->config->getNested("economy.commands.seemoney.name") ?? "seemoney",
             $this->config->getNested("economy.commands.seemoney-description") ?? "Voir la monnaie d'un joueur",
             $this->config->getNested("economy.commands.seemoney-aliases") ?? ["money"]
@@ -47,14 +53,14 @@ final class SeeMoneyCommand extends BaseCommand {
         if ($sender instanceof Player) {
             if (isset($args["player"])) {
                 $player = ($target = Server::getInstance()->getPlayerByPrefix($args["player"])) instanceof Player ? $target->getName() : $args["player"];
-                if (Main::getInstance()->getProvider()->exist($player)) {
-                    $sender->sendMessage(str_replace(["{player}", "{money}"], [$player, Main::getInstance()->getProvider()->get($player)], $this->config->getNested("economy.message.seemoney-success")));
+                if (Economy::getInstance()->getProvider()->exist($player)) {
+                    $sender->sendMessage(str_replace(["{player}", "{money}"], [$player, Economy::getInstance()->getProvider()->get($player)], $this->config->getNested("economy.message.seemoney-success")));
                 } else {
                     $sender->sendMessage(str_replace("{player}", $player, $this->config->getNested("economy.message.player-not-exist")));
                 }
             } else {
-                if (Main::getInstance()->getProvider()->exist($sender)) {
-                    $sender->sendMessage(str_replace("{money}", Main::getInstance()->getProvider()->get($sender), $this->config->getNested("economy.message.mymoney-success")));
+                if (Economy::getInstance()->getProvider()->exist($sender)) {
+                    $sender->sendMessage(str_replace("{money}", Economy::getInstance()->getProvider()->get($sender), $this->config->getNested("economy.message.mymoney-success")));
                 } else {
                     $sender->sendMessage($this->config->getNested("economy.message.self-not-exist"));
                 }

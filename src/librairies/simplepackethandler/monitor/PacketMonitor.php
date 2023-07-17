@@ -6,32 +6,61 @@ namespace economy\librairies\simplepackethandler\monitor;
 
 use Closure;
 use pocketmine\plugin\Plugin;
+use ReflectionException;
 
 final class PacketMonitor implements IPacketMonitor{
 
+    /**
+     * @var PacketMonitorListener
+     */
 	private PacketMonitorListener $listener;
 
-	public function __construct(Plugin $register, bool $handleCancelled){
-		$this->listener = new PacketMonitorListener($register, $handleCancelled);
+    /**
+     * @param Plugin $register
+     * @param bool $handle_cancelled
+     */
+	public function __construct(Plugin $register, bool $handle_cancelled) {
+		$this->listener = new PacketMonitorListener($register, $handle_cancelled);
 	}
 
-	public function monitorIncoming(Closure $handler) : IPacketMonitor{
+    /**
+     * @param Closure $handler
+     * @return IPacketMonitor
+     * @throws ReflectionException
+     */
+	public function monitorIncoming(Closure $handler): IPacketMonitor {
 		$this->listener->monitorIncoming($handler);
 		return $this;
 	}
 
-	public function monitorOutgoing(Closure $handler) : IPacketMonitor{
+    /**
+     * @param Closure $handler
+     * @return IPacketMonitor
+     * @throws ReflectionException
+     */
+	public function monitorOutgoing(Closure $handler): IPacketMonitor {
 		$this->listener->monitorOutgoing($handler);
 		return $this;
 	}
 
-	public function unregisterIncomingMonitor(Closure $handler) : IPacketMonitor{
+    /**
+     * @param Closure $handler
+     * @return IPacketMonitor
+     * @throws ReflectionException
+     */
+	public function unregisterIncomingMonitor(Closure $handler): IPacketMonitor {
 		$this->listener->unregisterIncomingMonitor($handler);
 		return $this;
 	}
 
-	public function unregisterOutgoingMonitor(Closure $handler) : IPacketMonitor{
+    /**
+     * @param Closure $handler
+     * @return IPacketMonitor
+     * @throws ReflectionException
+     */
+	public function unregisterOutgoingMonitor(Closure $handler): IPacketMonitor {
 		$this->listener->unregisterOutgoingMonitor($handler);
 		return $this;
 	}
+
 }

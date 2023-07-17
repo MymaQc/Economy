@@ -1,6 +1,7 @@
 <?php
 
 /***
+ * @noinspection PhpUnused
  *    ___                                          _
  *   / __\___  _ __ ___  _ __ ___   __ _ _ __   __| | ___
  *  / /  / _ \| '_ ` _ \| '_ ` _ \ / _` | '_ \ / _` |/ _ \
@@ -25,29 +26,32 @@
  * Written by @CortexPE <https://CortexPE.xyz>
  *
  */
-declare(strict_types=1);
 
 namespace economy\librairies\commando\args;
-
 
 use pocketmine\command\CommandSender;
 use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
 use function preg_match;
 
-class FloatArgument extends BaseArgument {
-	public function getNetworkType(): int {
-		return AvailableCommandsPacket::ARG_TYPE_FLOAT;
-	}
+class FloatArgument extends BaseArgument
+{
+    public function getNetworkType(): int
+    {
+        return AvailableCommandsPacket::ARG_TYPE_FLOAT;
+    }
 
-	public function getTypeName(): string {
-		return "decimal";
-	}
+    public function getTypeName(): string
+    {
+        return "decimal";
+    }
 
-	public function canParse(string $testString, CommandSender $sender): bool {
-		return (bool)preg_match("/^-?(?:\d+|\d*\.\d+)$/", $testString);
-	}
+    public function canParse(string $testString, CommandSender $sender): bool
+    {
+        return (bool)preg_match("/^-?(?:\d+|\d*\.\d+)$/", $testString);
+    }
 
-	public function parse(string $argument, CommandSender $sender) : float{
-		return (float) $argument;
-	}
+    public function parse(string $argument, CommandSender $sender): float
+    {
+        return (float)$argument;
+    }
 }

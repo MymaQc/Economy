@@ -11,19 +11,6 @@
 
 economy:
 
-  # Liste des paramètres de MySQL (si le type de données est MySQL)
-  mysql:
-    # IP de la base de données
-    host: 127.0.0.1
-    # Port de la base de données
-    port: 3306
-    # Nom d'utilisateur de la base de données
-    user: myma
-    # Mot de passe de la base de données
-    password: economy_1234
-    # Nom de la base de données
-    database: economy
-
   # Liste des messages du plugin
   message:
     # Message quand le plugin s'active
@@ -92,78 +79,60 @@ economy:
       name: seemoney
       # Description de la commande seemoney
       description: Gérer les commandes d'économie
-      # Permission de la commande seemoney
-      permission: money.use
       # Message d'usage de la commande seemoney
       usage: §fVous devez faire §e/seemoney (nom du joueur) §fpour voir la monnaie d'un joueur !
       # Liste des alias de la commande seemoney
       aliases:
         - money
-
     # Paramètres de la commande pay
     pay:
       # Nom de la commande pay
       name: pay
       # Description de la commande pay
       description: Envoyer de la monnaie à un joueur
-      # Permission de la commande pay
-      permission: pay.use
       # Message d'usage de la commande pay
       usage: §fVous devez faire §e/pay (nom du joueur) (montant) §fpour envoyer de la monnaie à d'un joueur !
       # Liste des alias de la commande pay
       aliases: []
-
     # Paramètres de la commande addmoney
     addmoney:
       # Nom de la commande addmoney
       name: addmoney
       # Description de la commande addmoney
       description: Ajouter de la monnaie à un joueur
-      # Permission de la commande addmoney
-      permission: addmoney.use
       # Message d'usage de la commande addmoney
       usage: §fVous devez faire §e/addmoney (nom du joueur) (montant) §fpour ajouter de la monnaie à un joueur !
       # Liste des alias de la commande addmoney
       aliases: []
-
     # Paramètres de la commande reducemoney
     reducemoney:
       # Nom de la commande addmoney
       name: reducemoney
       # Description de la commande addmoney
       description: Retirer de la monnaie à un joueur
-      # Permission de la commande addmoney
-      permission: reducemoney.use
       # Message d'usage de la commande addmoney
       usage: §fVous devez faire §e/reducemoney (nom du joueur) (montant) §fpour retirer de la monnaie à un joueur !
       # Liste des alias de la commande addmoney
       aliases:
         - removemoney
-
     # Paramètres de la commande setmoney
     setmoney:
       # Nom de la commande setmoney
       name: setmoney
       # Description de la commande setmoney
       description: Définir la monnaie d'un joueur
-      # Permission de la commande setmoney
-      permission: setmoney.use
       # Message d'usage de la commande setmoney
       usage: §fVous devez faire §e/setmoney (nom du joueur) (montant) §fpour définir la monnaie d'un joueur !
       # Liste des alias de la commande setmoney
       aliases: []
-
     # Paramètres de la commande topmoney
     topmoney:
       # Nom de la commande topmoney
       name: topmoney
       # Description de la commande topmoney
       description: Voir le classement des joueurs les plus riches
-      # Permission de la commande topmoney
-      permission: topmoney.use
       # Liste des alias de la commande topmoney
       aliases: []
-
     # Paramètres de la commande topmoneyfloatingtext
     topmoneyfloatingtext:
       # Nom de la commande topmoneyfloatingtext

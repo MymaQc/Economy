@@ -1,6 +1,7 @@
 <?php
 
 /***
+ * @noinspection PhpUnused
  *    ___                                          _
  *   / __\___  _ __ ___  _ __ ___   __ _ _ __   __| | ___
  *  / /  / _ \| '_ ` _ \| '_ ` _ \ / _` | '_ \ / _` |/ _ \
@@ -25,26 +26,27 @@
  * Written by @CortexPE <https://CortexPE.xyz>
  *
  */
-declare(strict_types=1);
 
 namespace economy\librairies\commando\constraint;
-
 
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class ConsoleRequiredConstraint extends BaseConstraint {
-
-    public function test(CommandSender $sender, string $aliasUsed, array $args): bool {
+class ConsoleRequiredConstraint extends BaseConstraint
+{
+    public function test(CommandSender $sender, string $aliasUsed, array $args): bool
+    {
         return $this->isVisibleTo($sender);
     }
 
-    public function onFailure(CommandSender $sender, string $aliasUsed, array $args): void {
-        $sender->sendMessage(TextFormat::RED . "This command must be executed from a server console."); // f*ck off grammar police
+    public function isVisibleTo(CommandSender $sender): bool
+    {
+        return !($sender instanceof Player);
     }
 
-    public function isVisibleTo(CommandSender $sender): bool {
-		return !($sender instanceof AKPlayer);
-	}
+    public function onFailure(CommandSender $sender, string $aliasUsed, array $args): void
+    {
+        $sender->sendMessage(TextFormat::RED . "This command must be executed from a server console."); // f*ck off grammar police
+    }
 }

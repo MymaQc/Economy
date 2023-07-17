@@ -25,11 +25,10 @@
  * Written by @CortexPE <https://CortexPE.xyz>
  *
  */
-declare(strict_types=1);
 
 namespace economy\librairies\commando\exception;
 
-
-class HookAlreadyRegistered extends CommandoException {
+class HookAlreadyRegistered extends CommandoException
+{
 
 }

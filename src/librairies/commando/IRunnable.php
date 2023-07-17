@@ -25,10 +25,8 @@
  * Written by @CortexPE <https://CortexPE.xyz>
  *
  */
-declare(strict_types=1);
 
 namespace economy\librairies\commando;
-
 
 use economy\librairies\commando\constraint\BaseConstraint;
 
@@ -38,9 +36,10 @@ use economy\librairies\commando\constraint\BaseConstraint;
  * An interface which is declares the minimum required information
  * to get background information for a command and/or a sub-command
  *
- * @package CortexPE\Commando
+ * @package economy\librairies\commando
  */
-interface IRunnable {
+interface IRunnable
+{
     public function getName(): string;
 
     /**
@@ -48,12 +47,12 @@ interface IRunnable {
      */
     public function getAliases(): array;
 
-    public function getUsageMessage():string;
+    public function getUsageMessage(): string;
 
-    public function getPermission(); // f*ck. PM didn't declare a return type... reeee
+    public function getPermissions(): array; // f*ck. PM didn't declare a return type... reeee
 
     /**
      * @return BaseConstraint[]
      */
-    public function getConstraints():array;
+    public function getConstraints(): array;
 }

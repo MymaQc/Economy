@@ -2,13 +2,13 @@
 
 namespace economy\entity;
 
-use economy\Main;
+use economy\Economy;
 use JetBrains\PhpStorm\Pure;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntitySizeInfo;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\item\ItemIds;
+use pocketmine\item\Hoe;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use pocketmine\player\Player;
@@ -16,23 +16,32 @@ use pocketmine\utils\TextFormat;
 
 final class TopMoneyFloatingTextEntity extends Entity {
 
-    /* @var float */
-    protected $scale = 0.001;
-
-    /* @var bool */
-    protected $alwaysShowNameTag = true;
-
-    /* @var bool */
-    protected $immobile = true;
-
-    /* @return EntitySizeInfo */
+    /**
+     * @return EntitySizeInfo
+     */
     #[Pure] protected function getInitialSizeInfo(): EntitySizeInfo {
         return new EntitySizeInfo(0.1, 0.1);
     }
 
-    /* @return string */
+    /**
+     * @return string
+     */
     public static function getNetworkTypeId(): string {
         return EntityIds::ARMOR_STAND;
+    }
+
+    /**
+     * @return float
+     */
+    protected function getInitialDragMultiplier(): float {
+        return 0.0;
+    }
+
+    /**
+     * @return float
+     */
+    protected function getInitialGravity(): float {
+        return 0.0;
     }
 
     /**
@@ -41,8 +50,8 @@ final class TopMoneyFloatingTextEntity extends Entity {
      */
     protected function initEntity(CompoundTag $nbt): void {
         parent::initEntity($nbt);
-        $this->setScale($this->scale);
-        $this->setImmobile($this->immobile);
+        $this->setScale(0.001);
+        $this->setNameTagAlwaysVisible();
         $this->setHealth(1);
         $this->setMaxHealth(1);
         $this->setCanSaveWithChunk(true);
@@ -68,7 +77,7 @@ final class TopMoneyFloatingTextEntity extends Entity {
             $damager = $source->getDamager();
             if ($damager instanceof Player) {
                 $item = $damager->getInventory()->getItemInHand();
-                if ($item->getId() === ItemIds::GOLDEN_HOE && $damager->getServer()->isOp($damager->getName())) {
+                if ($item instanceof Hoe && $damager->getServer()->isOp($damager->getName())) {
                     $source->getEntity()->kill();
                     return;
                 }
@@ -77,13 +86,15 @@ final class TopMoneyFloatingTextEntity extends Entity {
         }
     }
 
-    /* @return void */
+    /**
+     * @return void
+     */
     public function updateLeaderboard(): void {
         $i = 1;
-        $content = Main::getInstance()->getConfig()->getNested("economy.message.topmoney-header") . TextFormat::EOL;
-        foreach (Main::getInstance()->getProvider()->getAll(true) as $player => $money) {
+        $content = Economy::getInstance()->getConfig()->getNested("economy.message.topmoney-header") . TextFormat::EOL;
+        foreach (Economy::getInstance()->getProvider()->getAll(true) as $player => $money) {
             if ($i !== 11) {
-                $content .= str_replace(["{position}", "{player}", "{money}"], [$i, $player, $money], Main::getInstance()->getConfig()->getNested("economy.message.topmoney-format")) . TextFormat::EOL;
+                $content .= str_replace(["{position}", "{player}", "{money}"], [$i, $player, $money], Economy::getInstance()->getConfig()->getNested("economy.message.topmoney-format")) . TextFormat::EOL;
                 $i++;
             } else break;
         }

@@ -1,6 +1,7 @@
 <?php
 
 /***
+ * @noinspection PhpUnused
  *    ___                                          _
  *   / __\___  _ __ ___  _ __ ___   __ _ _ __   __| | ___
  *  / /  / _ \| '_ ` _ \| '_ ` _ \ / _` | '_ \ / _` |/ _ \
@@ -25,24 +26,25 @@
  * Written by @CortexPE <https://CortexPE.xyz>
  *
  */
-declare(strict_types=1);
 
 namespace economy\librairies\commando\args;
 
-
 use pocketmine\command\CommandSender;
 
-class BooleanArgument extends StringEnumArgument {
-	protected const VALUES = [
-		"true" => true,
-		"false" => false,
-	];
+class BooleanArgument extends StringEnumArgument
+{
+    protected const VALUES = [
+        "true" => true,
+        "false" => false,
+    ];
 
-	public function getTypeName(): string {
-		return "bool";
-	}
+    public function getTypeName(): string
+    {
+        return "bool";
+    }
 
-	public function parse(string $argument, CommandSender $sender) : mixed{
-		return $this->getValue($argument);
-	}
+    public function parse(string $argument, CommandSender $sender): mixed
+    {
+        return $this->getValue($argument);
+    }
 }

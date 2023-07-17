@@ -6,26 +6,25 @@ namespace economy\librairies\simplepackethandler\utils;
 
 use Closure;
 use InvalidArgumentException;
-use pocketmine\event\HandlerListManager;
+use ReflectionException;
 use ReflectionFunction;
 use ReflectionNamedType;
 
-final class Utils{
+final class Utils {
 
-	/**
-	 * @param Closure $closure
-	 * @param string[] $params
-	 * @param string $return_type
-	 * @return string[]
-	 */
-	public static function parseClosureSignature(Closure $closure, array $params, string $return_type) : array{
-		/** @noinspection PhpUnhandledExceptionInspection */
+    /**
+     * @param Closure $closure
+     * @param string[] $params
+     * @param string $return_type
+     * @return string[]
+     * @throws ReflectionException
+     */
+	public static function parseClosureSignature(Closure $closure, array $params, string $return_type): array {
 		$method = new ReflectionFunction($closure);
 		$type = $method->getReturnType();
-		if(!($type instanceof ReflectionNamedType) || $type->allowsNull() || $type->getName() !== $return_type){
-			throw new InvalidArgumentException("Return value of {$method->getName()} must be {$return_type}");
+		if (!($type instanceof ReflectionNamedType) || $type->allowsNull() || $type->getName() !== $return_type) {
+			throw new InvalidArgumentException("Return value of {$method->getName()} must be $return_type");
 		}
-
 		$parsed_params = [];
 		$parameters = $method->getParameters();
 		if(count($parameters) === count($params)){
@@ -39,30 +38,11 @@ final class Utils{
 				}
 				break;
 			}
-
-			if(count($parsed_params) === count($params)){
+			if (count($parsed_params) === count($params)) {
 				return $parsed_params;
 			}
 		}
-
 		throw new InvalidArgumentException("Closure must satisfy signature (" . implode(", ", $params) . ") : {$return_type}");
 	}
 
-	/**
-	 * @template TEvent of \pocketmine\event\Event
-	 * @param class-string<TEvent> $event
-	 * @param Closure(TEvent) : void $handler
-	 * @param int $priority
-	 * @return bool
-	 */
-	public static function unregisterEventByHandler(string $event, Closure $handler, int $priority) : bool{
-		$list = HandlerListManager::global()->getListFor($event);
-		foreach($list->getListenersByPriority($priority) as $listener){
-			if($listener->getHandler() === $handler){
-				$list->unregister($listener);
-				return true;
-			}
-		}
-		return false;
-	}
 }

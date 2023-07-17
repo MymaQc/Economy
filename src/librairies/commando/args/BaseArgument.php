@@ -25,79 +25,81 @@
  * Written by @CortexPE <https://CortexPE.xyz>
  *
  */
-declare(strict_types=1);
 
 namespace economy\librairies\commando\args;
-
 
 use pocketmine\command\CommandSender;
 use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
 use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 
-abstract class BaseArgument {
-	/** @var string */
-	protected string $name;
-	/** @var bool */
-	protected bool $optional = false;
-	/** @var CommandParameter */
-	protected CommandParameter $parameterData;
+abstract class BaseArgument
+{
+    protected string $name;
+    protected bool $optional = false;
 
-	public function __construct(string $name, bool $optional = false) {
-		$this->name = $name;
-		$this->optional = $optional;
+    protected CommandParameter $parameterData;
 
-		$this->parameterData = new CommandParameter();
-		$this->parameterData->paramName = $name;
-		$this->parameterData->paramType = AvailableCommandsPacket::ARG_FLAG_VALID;
-		$this->parameterData->paramType |= $this->getNetworkType();
-		$this->parameterData->isOptional = $this->isOptional();
-	}
+    public function __construct(string $name, bool $optional = false)
+    {
+        $this->name = $name;
+        $this->optional = $optional;
 
-	abstract public function getNetworkType(): int;
+        $this->parameterData = new CommandParameter();
+        $this->parameterData->paramName = $name;
+        $this->parameterData->paramType = AvailableCommandsPacket::ARG_FLAG_VALID;
+        $this->parameterData->paramType |= $this->getNetworkType();
+        $this->parameterData->isOptional = $this->isOptional();
+    }
 
-	/**
-	 * @param string            $testString
-	 * @param CommandSender     $sender
-	 *
-	 * @return bool
-	 */
-	abstract public function canParse(string $testString, CommandSender $sender): bool;
+    abstract public function getNetworkType(): int;
 
-	/**
-	 * @param string        $argument
-	 * @param CommandSender $sender
-	 *
-	 * @return mixed
-	 */
-	abstract public function parse(string $argument, CommandSender $sender) : mixed;
+    /**
+     * @return bool
+     */
+    public function isOptional(): bool
+    {
+        return $this->optional;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getName(): string {
-		return $this->name;
-	}
+    /**
+     * @param string $testString
+     * @param CommandSender $sender
+     *
+     * @return bool
+     */
+    abstract public function canParse(string $testString, CommandSender $sender): bool;
 
-	/**
-	 * @return bool
-	 */
-	public function isOptional(): bool {
-		return $this->optional;
-	}
+    /**
+     * @param string $argument
+     * @param CommandSender $sender
+     *
+     * @return mixed
+     */
+    abstract public function parse(string $argument, CommandSender $sender): mixed;
 
-	/**
-	 * Returns how much command arguments
-	 * it takes to build the full argument
-	 *
-	 * @return int
-	 */
-	public function getSpanLength(): int {
-		return 1;
-	}
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
 
-	abstract public function getTypeName(): string;
+    /**
+     * Returns how much command arguments
+     * it takes to build the full argument
+     *
+     * @return int
+     */
+    public function getSpanLength(): int
+    {
+        return 1;
+    }
 
-	public function getNetworkParameterData():CommandParameter {
-		return $this->parameterData;
-	}
+    abstract public function getTypeName(): string;
+
+    public function getNetworkParameterData(): CommandParameter
+    {
+        return $this->parameterData;
+    }
 }

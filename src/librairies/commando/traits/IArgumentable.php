@@ -25,22 +25,24 @@
  * Written by @CortexPE <https://CortexPE.xyz>
  *
  */
-declare(strict_types=1);
 
 namespace economy\librairies\commando\traits;
-
 
 use economy\librairies\commando\args\BaseArgument;
 use pocketmine\command\CommandSender;
 
-interface IArgumentable {
-	public function generateUsageMessage(): string;
-	public function hasArguments(): bool;
+interface IArgumentable
+{
+    public function generateUsageMessage(string $parent = ""): string;
 
-	/**
-	 * @return BaseArgument[][]
-	 */
-	public function getArgumentList(): array;
-	public function parseArguments(array $rawArgs, CommandSender $sender): array;
-	public function registerArgument(int $position, BaseArgument $argument): void;
+    public function hasArguments(): bool;
+
+    /**
+     * @return BaseArgument[][]
+     */
+    public function getArgumentList(): array;
+
+    public function parseArguments(array $rawArgs, CommandSender $sender): array;
+
+    public function registerArgument(int $position, BaseArgument $argument): void;
 }

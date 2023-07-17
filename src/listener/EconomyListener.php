@@ -2,7 +2,7 @@
 
 namespace economy\listener;
 
-use economy\Main;
+use economy\Economy;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 
@@ -14,11 +14,11 @@ final class EconomyListener implements Listener {
      */
     public function onJoin(PlayerJoinEvent $event): void {
         $player = $event->getPlayer();
-        $provider = Main::getInstance()->getProvider();
-        $config = Main::getInstance()->getConfig();
+        $provider = Economy::getInstance()->getProvider();
+        $config = Economy::getInstance()->getConfig();
         if (!$provider->exist($player)) {
             $provider->create($player, intval($config->getNested("economy.settings.default-money")));
-            Main::getInstance()->getLogger()->notice(str_replace("{player}", $player->getName(), $config->getNested("economy.message.new-player")));
+            Economy::getInstance()->getLogger()->notice(str_replace("{player}", $player->getName(), $config->getNested("economy.message.new-player")));
         }
     }
 

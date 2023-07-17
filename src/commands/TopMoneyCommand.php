@@ -3,21 +3,27 @@
 namespace economy\commands;
 
 use economy\librairies\commando\BaseCommand;
-use economy\Main;
+use economy\Economy;
 use pocketmine\command\CommandSender;
+use pocketmine\permission\DefaultPermissions;
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
 
 final class TopMoneyCommand extends BaseCommand {
 
-    /* @var Config */
+    /**
+     * @var Config
+     */
     public Config $config;
 
-    /* CONSTRUCT */
+    /**
+     * CONSTRUCT
+     */
     public function __construct() {
-        $this->config = Main::getInstance()->getConfig();
+        $this->config = Economy::getInstance()->getConfig();
+        $this->setPermission(DefaultPermissions::ROOT_USER);
         parent::__construct(
-            Main::getInstance(),
+            Economy::getInstance(),
             $this->config->getNested("economy.commands.topmoney.name") ?? "topmoney",
             $this->config->getNested("economy.commands.topmoney-description") ?? "Voir la liste des joueurs les plus riches",
             $this->config->getNested("economy.commands.topmoney-aliases") ?? []
@@ -39,7 +45,7 @@ final class TopMoneyCommand extends BaseCommand {
         if ($sender instanceof Player) {
             $i = 1;
             $sender->sendMessage($this->config->getNested("economy.message.topmoney-header"));
-            foreach (Main::getInstance()->getProvider()->getAll(true) as $player => $money) {
+            foreach (Economy::getInstance()->getProvider()->getAll(true) as $player => $money) {
                 if ($i !== 11) {
                     $sender->sendMessage(str_replace(["{position}", "{player}", "{money}"], [$i, $player, $money], $this->config->getNested("economy.message.topmoney-format")));
                     $i++;

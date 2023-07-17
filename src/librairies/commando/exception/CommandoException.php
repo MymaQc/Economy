@@ -25,13 +25,12 @@
  * Written by @CortexPE <https://CortexPE.xyz>
  *
  */
-declare(strict_types=1);
 
 namespace economy\librairies\commando\exception;
 
-
 use Exception;
 
-class CommandoException extends Exception {
+class CommandoException extends Exception
+{
 
 }

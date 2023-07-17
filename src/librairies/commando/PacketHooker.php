@@ -1,6 +1,7 @@
 <?php
 
 /***
+ * @noinspection PhpUnused
  *    ___                                          _
  *   / __\___  _ __ ___  _ __ ___   __ _ _ __   __| | ___
  *  / /  / _ \| '_ ` _ \| '_ ` _ \ / _` | '_ \ / _` |/ _ \
@@ -25,149 +26,162 @@
  * Written by @CortexPE <https://CortexPE.xyz>
  *
  */
-declare(strict_types=1);
 
 namespace economy\librairies\commando;
-
 
 use economy\librairies\commando\exception\HookAlreadyRegistered;
 use economy\librairies\commando\store\SoftEnumStore;
 use economy\librairies\commando\traits\IArgumentable;
-use economy\librairies\simplepackethandler\SimplePacketHandler;
 use pocketmine\command\CommandSender;
 use pocketmine\event\EventPriority;
 use pocketmine\event\Listener;
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
 use pocketmine\network\mcpe\protocol\types\command\CommandEnum;
+use pocketmine\network\mcpe\protocol\types\command\CommandOverload;
 use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\plugin\Plugin;
 use pocketmine\Server;
 use ReflectionClass;
-use function array_unshift;
+use economy\librairies\simplepackethandler\SimplePacketHandler;
+use function count;
 
-class PacketHooker implements Listener {
-	/** @var bool */
-	private static bool $isRegistered = false;
-	/** @var bool */
-	private static bool $isIntercepting = false;
+class PacketHooker implements Listener
+{
+    private static bool $isRegistered = false;
 
-	public static function isRegistered(): bool {
-		return self::$isRegistered;
-	}
+    private static bool $isIntercepting = false;
 
-    /* @throws HookAlreadyRegistered */
-    public static function register(Plugin $registrant): void {
-		if(self::$isRegistered) {
-			throw new HookAlreadyRegistered("Event listener is already registered by another plugin.");
-		}
+    public static function isRegistered(): bool
+    {
+        return self::$isRegistered;
+    }
 
-		$interceptor = SimplePacketHandler::createInterceptor($registrant, EventPriority::NORMAL, false);
-		$interceptor->interceptOutgoing(function(AvailableCommandsPacket $pk, NetworkSession $target) : bool{
-			if(self::$isIntercepting)return true;
-			$p = $target->getPlayer();
-			foreach($pk->commandData as $commandName => $commandData) {
-				$cmd = Server::getInstance()->getCommandMap()->getCommand($commandName);
-				if($cmd instanceof BaseCommand) {
-					foreach($cmd->getConstraints() as $constraint){
-						if(!$constraint->isVisibleTo($p)){
-							continue 2;
-						}
-					}
-					$pk->commandData[$commandName]->overloads = self::generateOverloads($p, $cmd);
-				}
-			}
-			$pk->softEnums = SoftEnumStore::getEnums();
-			self::$isIntercepting = true;
-			$target->sendDataPacket($pk);
-			self::$isIntercepting = false;
-			return false;
-		});
+    /**
+     * @throws HookAlreadyRegistered
+     */
+    public static function register(Plugin $registrant): void
+    {
+        if (self::$isRegistered) {
+            throw new HookAlreadyRegistered("Event listener is already registered by another plugin.");
+        }
 
-		self::$isRegistered = true;
-	}
+        $interceptor = SimplePacketHandler::createInterceptor($registrant, EventPriority::HIGHEST);
 
-	/**
-	 * @param CommandSender $cs
-	 * @param BaseCommand $command
-	 *
-	 * @return CommandParameter[][]
-	 */
-	private static function generateOverloads(CommandSender $cs, BaseCommand $command): array {
-		$overloads = [];
+        $interceptor->interceptOutgoing(function (AvailableCommandsPacket $pk, NetworkSession $target): bool {
+            if (self::$isIntercepting) {
+                return true;
+            }
 
-		foreach($command->getSubCommands() as $label => $subCommand) {
-			if(!$subCommand->testPermissionSilent($cs) || $subCommand->getName() !== $label){ // hide aliases
-				continue;
-			}
-			foreach($subCommand->getConstraints() as $constraint){
-				if(!$constraint->isVisibleTo($cs)){
-					continue 2;
-				}
-			}
-			$scParam = new CommandParameter();
-			$scParam->paramName = $label;
-			$scParam->paramType = AvailableCommandsPacket::ARG_FLAG_VALID | AvailableCommandsPacket::ARG_FLAG_ENUM;
-			$scParam->isOptional = false;
-			$scParam->enum = new CommandEnum($label, [$label]);
+            $p = $target->getPlayer();
 
-			$overloadList = self::generateOverloadList($subCommand);
-			if(!empty($overloadList)){
-				foreach($overloadList as $overload) {
-					array_unshift($overload, $scParam);
-					$overloads[] = $overload;
-				}
-			} else {
-				$overloads[] = [$scParam];
-			}
-		}
+            foreach ($pk->commandData as $commandName => $commandData) {
+                $cmd = Server::getInstance()->getCommandMap()->getCommand($commandName);
+                if ($cmd instanceof BaseCommand) {
+                    foreach ($cmd->getConstraints() as $constraint) {
+                        if (!$constraint->isVisibleTo($p)) {
+                            continue 2;
+                        }
+                    }
+                    $pk->commandData[$commandName]->overloads = self::generateOverloads($p, $cmd);
+                }
+            }
+            $pk->softEnums = SoftEnumStore::getEnums();
+            self::$isIntercepting = true;
+            $target->sendDataPacket($pk);
+            self::$isIntercepting = false;
+            return false;
+        });
+    }
 
-		foreach(self::generateOverloadList($command) as $overload) {
-			$overloads[] = $overload;
-		}
+    /**
+     * @param CommandSender $cs
+     * @param BaseCommand $command
+     *
+     * @return CommandOverload[]
+     */
+    public static function generateOverloads(CommandSender $cs, BaseCommand $command): array
+    {
+        $overloads = [];
 
-		return $overloads;
-	}
+        foreach ($command->getSubCommands() as $label => $subCommand) {
+            if (!$subCommand->testPermissionSilent($cs) || $subCommand->getName() !== $label) { // hide aliases
+                continue;
+            }
+            foreach ($subCommand->getConstraints() as $constraint) {
+                if (!$constraint->isVisibleTo($cs)) {
+                    continue 2;
+                }
+            }
 
-	/**
-	 * @param IArgumentable $argumentable
-	 *
-	 * @return CommandParameter[][]
-	 */
-	private static function generateOverloadList(IArgumentable $argumentable): array {
-		$input = $argumentable->getArgumentList();
-		$combinations = [];
-		$outputLength = array_product(array_map("count", $input));
-		$indexes = [];
-		foreach($input as $k => $charList){
-			$indexes[$k] = 0;
-		}
-		do {
-			/** @var CommandParameter[] $set */
-			$set = [];
-			foreach($indexes as $k => $index){
-				$param = $set[$k] = clone $input[$k][$index]->getNetworkParameterData();
+            $scParam = new CommandParameter();
+            $scParam->paramName = $label;
+            $scParam->paramType = AvailableCommandsPacket::ARG_FLAG_VALID | AvailableCommandsPacket::ARG_FLAG_ENUM;
+            $scParam->isOptional = false;
+            $scParam->enum = new CommandEnum($label, [$label]);
 
-				if(isset($param->enum) && $param->enum instanceof CommandEnum){
-					$refClass = new ReflectionClass(CommandEnum::class);
-					$refProp = $refClass->getProperty("enumName");
-					$refProp->setAccessible(true);
-					$refProp->setValue($param->enum, "enum#" . spl_object_id($param->enum));
-				}
-			}
-			$combinations[] = $set;
+            $overloadList = self::generateOverloads($cs, $subCommand);
+            if (!empty($overloadList)) {
+                foreach ($overloadList as $overload) {
+                    $overloads[] = new CommandOverload(false, [$scParam, ...$overload->getParameters()]);
+                }
+            } else {
+                $overloads[] = new CommandOverload(false, [$scParam]);
+            }
+        }
 
-			foreach($indexes as $k => $v){
-				$indexes[$k]++;
-				$lim = count($input[$k]);
-				if($indexes[$k] >= $lim){
-					$indexes[$k] = 0;
-					continue;
-				}
-				break;
-			}
-		} while(count($combinations) !== $outputLength);
+        foreach (self::generateOverloadList($command) as $overload) {
+            $overloads[] = $overload;
+        }
 
-		return $combinations;
-	}
+        return $overloads;
+    }
+
+    /**
+     * @param IArgumentable $argumentable
+     *
+     * @return CommandOverload[]
+     */
+    private static function generateOverloadList(IArgumentable $argumentable): array
+    {
+        $input = $argumentable->getArgumentList();
+        $combinations = [];
+        $outputLength = array_product(array_map("count", $input));
+        $indexes = [];
+
+        foreach ($input as $k => $charList) {
+            $indexes[$k] = 0;
+        }
+
+        do {
+            /** @var CommandParameter[] $set */
+            $set = [];
+
+            foreach ($indexes as $k => $index) {
+                $param = $set[$k] = clone $input[$k][$index]->getNetworkParameterData();
+
+                if (isset($param->enum) && $param->enum instanceof CommandEnum) {
+                    $refClass = new ReflectionClass(CommandEnum::class);
+                    $refProp = $refClass->getProperty("enumName");
+                    /** @noinspection PhpExpressionResultUnusedInspection */
+                    $refProp->setAccessible(true);
+                    $refProp->setValue($param->enum, "enum#" . spl_object_id($param->enum));
+                }
+            }
+
+            $combinations[] = new CommandOverload(false, $set);
+
+            foreach ($indexes as $k => $v) {
+                $indexes[$k]++;
+                $lim = count($input[$k]);
+                if ($indexes[$k] >= $lim) {
+                    $indexes[$k] = 0;
+                    continue;
+                }
+                break;
+            }
+        } while (count($combinations) !== $outputLength);
+
+        return $combinations;
+    }
 }

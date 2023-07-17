@@ -6,22 +6,28 @@ use economy\librairies\commando\args\IntegerArgument;
 use economy\librairies\commando\args\TargetArgument;
 use economy\librairies\commando\BaseCommand;
 use economy\librairies\commando\exception\ArgumentOrderException;
-use economy\Main;
+use economy\Economy;
 use pocketmine\command\CommandSender;
+use pocketmine\permission\DefaultPermissions;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 
 final class PayCommand extends BaseCommand {
 
-    /* @var Config */
+    /**
+     * @var Config
+     */
     public Config $config;
 
-    /* CONSTRUCT */
+    /**
+     * CONSTRUCT
+     */
     public function __construct() {
-        $this->config = Main::getInstance()->getConfig();
+        $this->config = Economy::getInstance()->getConfig();
+        $this->setPermission(DefaultPermissions::ROOT_USER);
         parent::__construct(
-            Main::getInstance(),
+            Economy::getInstance(),
             $this->config->getNested("economy.commands.pay.name") ?? "pay",
             $this->config->getNested("economy.commands.pay.description") ?? "Envoyer de la monnaie à d'autres joueurs",
             $this->config->getAll("economy.commands.pay.aliases") ?? []
@@ -48,13 +54,13 @@ final class PayCommand extends BaseCommand {
             if (isset($args["player"], $args["amount"])) {
                 $target = Server::getInstance()->getPlayerByPrefix($args["player"]);
                 if ($target instanceof Player) {
-                    if (Main::getInstance()->getProvider()->exist($target)) {
+                    if (Economy::getInstance()->getProvider()->exist($target)) {
                         if (is_int($args["amount"])) {
                             if ($args["amount"] > 0) {
                                 if ($sender->getName() !== $target->getName()) {
-                                    if (Main::getInstance()->getProvider()->get($sender) >= $args["amount"]) {
-                                        Main::getInstance()->getProvider()->add($target, $args["amount"]);
-                                        Main::getInstance()->getProvider()->reduce($sender, $args["amount"]);
+                                    if (Economy::getInstance()->getProvider()->get($sender) >= $args["amount"]) {
+                                        Economy::getInstance()->getProvider()->add($target, $args["amount"]);
+                                        Economy::getInstance()->getProvider()->reduce($sender, $args["amount"]);
                                         $sender->sendMessage(str_replace(["{money}", "{player}"], [$args["amount"], $target->getName()], $this->config->getNested("economy.message.pay-sender-success")));
                                         $target->sendMessage(str_replace(["{money}", "{player}"], [$args["amount"], $sender->getName()], $this->config->getNested("economy.message.pay-target-success")));
                                     } else {
