@@ -2,6 +2,7 @@
 
 namespace economy;
 
+use economy\api\EconomyApi;
 use economy\commands\AddMoneyCommand;
 use economy\commands\MyMoneyCommand;
 use economy\commands\PayCommand;
@@ -124,6 +125,13 @@ final class Economy extends PluginBase {
     /* @return Provider */
     public function getProvider(): Provider {
         return $this->provider;
+    }
+
+    /**
+     * @return EconomyApi
+     */
+    public function getApi(): EconomyApi {
+        return EconomyApi::getInstance();
     }
 
 }
