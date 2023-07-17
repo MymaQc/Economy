@@ -11,45 +11,50 @@ final class EconomyApi {
     use SingletonTrait;
 
     /**
-     * @param Player $player
+     * @param Player|string $player
      * @return bool
      */
-    public function hasMoney(Player $player): bool {
+    public function hasMoney(Player|string $player): bool {
+        $player = $player instanceof Player ? strtolower($player->getName()) : strtolower($player);
         return Economy::getInstance()->getProvider()->exist($player);
     }
 
     /**
-     * @param Player $player
+     * @param Player|string $player
      * @return int
      */
-    public function getMoney(Player $player): int {
+    public function getMoney(Player|string $player): int {
+        $player = $player instanceof Player ? strtolower($player->getName()) : strtolower($player);
         return Economy::getInstance()->getProvider()->get($player);
     }
 
     /**
-     * @param Player $player
+     * @param Player|string $player
      * @param int $moneyToSet
      * @return void
      */
-    public function setMoney(Player $player, int $moneyToSet): void {
+    public function setMoney(Player|string $player, int $moneyToSet): void {
+        $player = $player instanceof Player ? strtolower($player->getName()) : strtolower($player);
         Economy::getInstance()->getProvider()->set($player, $moneyToSet);
     }
 
     /**
-     * @param Player $player
+     * @param Player|string $player
      * @param int $moneyToAdd
      * @return void
      */
-    public function addMoney(Player $player, int $moneyToAdd): void {
+    public function addMoney(Player|string $player, int $moneyToAdd): void {
+        $player = $player instanceof Player ? strtolower($player->getName()) : strtolower($player);
         Economy::getInstance()->getProvider()->add($player, $moneyToAdd);
     }
 
     /**
-     * @param Player $player
+     * @param Player|string $player
      * @param int $moneyToReduce
      * @return void
      */
-    public function reduceMoney(Player $player, int $moneyToReduce): void {
+    public function reduceMoney(Player|string $player, int $moneyToReduce): void {
+        $player = $player instanceof Player ? strtolower($player->getName()) : strtolower($player);
         Economy::getInstance()->getProvider()->reduce($player, $moneyToReduce);
     }
 
